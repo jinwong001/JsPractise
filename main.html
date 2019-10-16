@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button onclick="download()"> 下载</button>
+<script>
+    function download() {
+
+        let data = {
+            openId: "oaez64sVdDvB3yf1r0-WjB1KYdL8",
+            merchantCode: "2088912057676397",
+            shopId: "lx20190904182918955490",
+            userId: "16927"
+        }
+        _ajax({
+            type: 'POST',
+            url: 'https://tasty.ipay.so/v1/mini/merchant/shop/status/query',
+            data: JSON.stringify(data),
+        }, function (data) {
+            console.log(data);
+        });
+    }
+
+    var _ajax = function (options, callback) {
+        options.async = options.async || true;
+        var xhr = null,
+            DONE = 4, // readyState 4 means the request is done.
+            OK = 200; // status 200 is a successful return.
+        try {
+            xhr = new XMLHttpRequest(); // Mozilla, Safari, ...
+        } catch (e) {
+            try {
+                xhr = new ActiveXObject("Msxml2.XMLHTTP"); // IE
+            } catch (e) {
+                try {
+                    xhr = new ActiveXObject("Microsoft.XMLHTTP"); // old IE
+                } catch (e) {
+                    return;
+                }
+            }
+        }
+        // if (location.href.substring(0, 3) !== 'http') {
+        //     options.url = 'https://cardtest.ipay.so' + options.url;
+        // }
+        if (xhr !== null) {
+            xhr.timeout = 10000; // timeout 10s
+            xhr.open(
+                options.type,
+                options.url,
+                options.async
+            );
+            xhr.onreadystatechange = function () {
+
+                if (xhr.readyState === DONE) {
+                    if (xhr.status == OK) {
+                        callback(JSON.parse(xhr.response));
+                    } else {
+                        alert("Problem retrieving JSON data");
+                    }
+                }
+            };
+            xhr.ontimeout = function (e) {
+                alert('timeout: ' + JSON.stringify(e));
+            };
+            if (options.type === 'POST') {
+                xhr.setRequestHeader('Content-Type', 'Content-Type: application/json; charset=utf-8');
+                // xhr.setRequestHeader('Content-Type', 'application/json');
+            }
+            xhr.send(options.data || null);
+        } else {
+            alert("Your browser does not support XMLHTTP.");
+        }
+    };
+</script>
+</body>
+</html>
